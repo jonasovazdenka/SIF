@@ -1,30 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+
 <?php
+$txt = "bluetooth";
+$key = "jonasova";
+$match_key = "";
 
-$simple_string = "Bluetooth\n";
+$encrypted = "";
+$decrypted = "";
 
-echo "Original String: " . $simple_string;
 
-$ciphering = "AES-128-CTR";
+function my_encrypt($txt, $key)
+{
+$encrypted = "";
+$index = 0;
+for ($x = 0; $x < strlen($txt); $x++)
+{
+$num1 = ord($txt{$x});
 
-$iv_length = openssl_cipher_iv_length($ciphering);
-$options = 0;
+# cycle index
+if ( $index == (strlen($key) - 1) )
+{
+$index = 0;
+}
+$num2 = ord($key{$index});
+$index++;
+$sum = $num1 + $num2;
 
-$encryption_iv = '83917929778';
+$encrypted .= chr($sum);
+}
+return $encrypted;
+}
 
-$encryption_key = "Jonasova";
+function my_decrypt($encrypted, $key)
+{
+$index = 0;
+for ($x = 0; $x < strlen($encrypted); $x++)
+{
+$num1 = ord($encrypted{$x});
 
-$encryption = openssl_encrypt($simple_string, $ciphering,
-$encryption_key, $options, $encryption_iv);
+# cycle index
+if ( $index == (strlen($key) - 1) )
+{
+$index = 0;
+}
 
-echo "Encrypted String: " . $encryption . "\n";
+$num2 = ord($key{$index});
+$index++;
+$sum = $num1 - $num2;
 
-$decryption_iv = '83917929778';
+$decrypted .= chr($sum);
+}
+return $decrypted;
+}
 
-$decryption_key = "Jonasova";
 
-$decryption=openssl_decrypt ($encryption, $ciphering,
-$decryption_key, $options, $decryption_iv);
+$encrypted = my_encrypt($txt, $key);
+$decrypted = my_decrypt($encrypted, $key);
 
-echo "Decrypted String: " . $decryption;
 
+
+echo "To encrypt: $txt<br>";
+echo "Encrypted text: $encrypted<br>";
+echo "decrypted text: $decrypted<br>";
 ?>
+
+</body>
+</html>
